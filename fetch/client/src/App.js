@@ -5,49 +5,23 @@ const SERVER_URL = "http://localhost:4000/api/todo";
 function App() {
   const [todoList, setTodoList] = useState(null);
 
-  const fetchData = () => {
-    axios
-      .get(SERVER_URL)
-      .then((response) => {
-      setTodoList(response.data);
-    });
-
-    // fetch(SERVER_URL)
-    //   .then((response) => response.json())
-    //   .then((data) => setTodoList(data));
+  const fetchData = async () => {
+    const response = await axios.get(SERVER_URL);
+    setTodoList(response.data);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     const text = e.target.text.value;
     const done = e.target.done.checked;
 
-    axios
-      .post(SERVER_URL, {
-        text,
-        done,
-      })
-      .then(() => {
-        fetchData();
-      });
-
-    // fetch(SERVER_URL, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     text,
-    //     done,
-    //   }),
-    // }).then(() =>
-    // fetchData()
-    // );
+    await axios.post(SERVER_URL, { text, done });
+    fetchData();
   };
 
   return (
