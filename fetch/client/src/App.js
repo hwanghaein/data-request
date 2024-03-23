@@ -1,17 +1,24 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
+const SERVER_URL = "http://localhost:4000/api/todo";
 
 function App() {
   const [todoList, setTodoList] = useState(null);
 
   const fetchData = () => {
-    // 함수로 만들기
-    fetch("http://localhost:4000/api/todo")
-      .then((response) => response.json())
-      .then((data) => setTodoList(data));
+    axios
+      .get(SERVER_URL)
+      .then((response) => {
+      setTodoList(response.data);
+    });
+
+    // fetch(SERVER_URL)
+    //   .then((response) => response.json())
+    //   .then((data) => setTodoList(data));
   };
 
   useEffect(() => {
-    fetchData(); // 여기서 쓰기
+    fetchData();
   }, []);
 
   const onSubmitHandler = (e) => {
@@ -20,20 +27,27 @@ function App() {
     const text = e.target.text.value;
     const done = e.target.done.checked;
 
-    fetch("http://localhost:4000/api/todo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    axios
+      .post(SERVER_URL, {
         text,
         done,
-      }),
-    }).then(() =>
-      fetch("http://localhost:4000/api/todo")
-        .then((response) => response.json())
-        .then((data) => setTodoList(data))
-    );
+      })
+      .then(() => {
+        fetchData();
+      });
+
+    // fetch(SERVER_URL, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     text,
+    //     done,
+    //   }),
+    // }).then(() =>
+    // fetchData()
+    // );
   };
 
   return (
